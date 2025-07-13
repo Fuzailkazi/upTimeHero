@@ -5,6 +5,10 @@ app.use(express.json())
 
 
 app.post('/website', async (req, res) => {
+    if (!req.body.url) {
+        res.status(411).json({})
+        return
+    }
     const website = await prismaClient.website.create({
         data: {
             url: req.body.url,
