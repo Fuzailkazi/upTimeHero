@@ -28,7 +28,8 @@ describe("Website gets created", () => {
         }
     });
 
-    it.todo("Website is created if url is not present", async () => {
+    // this fails
+    it("Website is created if url is present", async () => {
 
         const response = await axios.post(`${BACKEND_URL}/website`, {
             url: "https://google.com"
@@ -48,7 +49,7 @@ describe("Website gets created", () => {
             });
             expect(false, "Website shouldnt be created if no auth header")
         } catch(e) {
-
+            
         }
     })
 });
