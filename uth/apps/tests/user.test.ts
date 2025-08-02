@@ -42,7 +42,7 @@ describe("Signin endpoints", () => {
             })
             expect(false, "Control shouldnt reach here")
         } catch(e) {
-            console.log(e);
+            // console.log(e);
         }
     })
 
@@ -55,7 +55,7 @@ describe("Signin endpoints", () => {
             expect(res.status).toBe(200);
             expect(res.data.jwt).toBeDefined();
         } catch(e) {
-            console.log(e);
+            // console.log(e);
         }   
     })
 })
