@@ -2,6 +2,7 @@ import express from "express"
 import jwt from "jsonwebtoken"
 import { prismaClient } from "store/client"
 import { AuthInput } from "./types"
+import { authMiddleware } from "./middleware"
 const app = express()
 app.use(express.json())
 
@@ -58,7 +59,7 @@ app.post("/user/signin", async (req, res) => {
     })
 })
 
-app.post('/website', async (req, res) => {
+app.post('/website', authMiddleware,async (req, res) => {
     if (!req.body.url) {
         res.status(411).json({})
         return
@@ -76,12 +77,35 @@ app.post('/website', async (req, res) => {
     })
 })
 
-app.get('/status/:webisteId', (req, res) => {
-    const data = AuthInput.safeParse(req.body.data);
-    if(!data.success){
-        res.status(403).send("")
-        return
+app.get('/status/:webisteId',authMiddleware, async (req, res) => {
+     const website = await prismaClient.website.findFirst({
+        where: {
+            user_id: req.userId!,
+            id: req.params.websiteId,
+        },
+        include: {
+            ticks: {
+                orderBy: [{
+                    createdAt: 'desc',
+                }],
+                take: 1
+            }
+        }
+    })
+
+    if (!website) {
+        res.status(409).json({
+            message: "Not found"
+        })
+        return;
     }
+
+    res.json({
+        url: website.url,
+        id: website.id,
+        user_id: website.user_id
+    })
+
 })
 
 app.listen(process.env.PORT || 3000)
